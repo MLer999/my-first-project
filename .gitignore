@@ -1,0 +1,27 @@
+# env
+.env
+.env.local
+.env*.local
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+
+# Next.js
+.next/
+out/
+next-env.d.ts
+tsconfig.tsbuildinfo
+
+# data (top-level only)
+/reflections/
+
+# deps
+node_modules/
+
+# Claude Code internal
+.claude/
+
+# AI context docs
+ai_context/
