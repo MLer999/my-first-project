@@ -9,6 +9,8 @@ import type { User } from "@supabase/supabase-js"
 type Message = { role: "assistant" | "user"; content: string }
 type Step = "loading" | "existing" | "chat" | "synthesizing" | "done"
 
+const RS = { fontFamily: '"MS Pゴシック", "MS PGothic", sans-serif', color: "#000080" }
+
 export default function ReflectPage() {
   const router = useRouter()
   const [user, setUser] = useState<User | null>(null)
@@ -136,136 +138,113 @@ export default function ReflectPage() {
 
   if (step === "loading") {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-950">
-        <div className="w-5 h-5 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin" />
+      <div style={{ background: "#E0FFFF", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", ...RS }}>
+        <p>読み込み中...</p>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 flex flex-col">
-      <header className="bg-slate-900/80 backdrop-blur-md border-b border-white/5 px-4 py-3 flex items-center justify-between sticky top-0 z-10">
-        <span className="font-semibold text-white text-sm">🌙 振り返りアプリ</span>
-        <div className="flex items-center gap-3">
-          {!isGuest && (
+    <div style={{ background: "#E0FFFF", minHeight: "100vh", padding: "20px 0", ...RS }}>
+      <div className="retro-wrapper" style={{ display: "flex", flexDirection: "column" }}>
+        <header style={{ borderBottom: "2px dashed #000080", marginBottom: "16px", paddingBottom: "10px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <span style={{ fontWeight: "bold", fontSize: "15px" }}>🌙 振り返りアプリ</span>
+          <div style={{ display: "flex", gap: "10px", alignItems: "center", fontSize: "12px" }}>
+            {!isGuest && (
+              <button onClick={() => router.push("/history")} className="retro-btn" style={{ padding: "3px 10px", fontSize: "12px" }}>
+                📚 履歴
+              </button>
+            )}
+            {isGuest ? (
+              <span style={{ border: "1px solid #000080", padding: "2px 6px" }}>ゲスト</span>
+            ) : (
+              <span>{user?.email}</span>
+            )}
             <button
-              onClick={() => router.push("/history")}
-              className="text-xs text-slate-400 hover:text-white transition-colors px-3 py-1.5 rounded-lg hover:bg-white/5"
+              onClick={handleSignOut}
+              style={{ background: "none", border: "none", cursor: "pointer", color: "#000080", fontSize: "12px", textDecoration: "underline", fontFamily: '"MS Pゴシック", "MS PGothic", sans-serif' }}
             >
-              📚 履歴
-            </button>
-          )}
-          {isGuest ? (
-            <span className="text-xs bg-amber-500/10 text-amber-400 border border-amber-500/20 px-2.5 py-1 rounded-full font-medium">
-              ゲスト
-            </span>
-          ) : (
-            <span className="text-xs text-slate-500 hidden sm:block truncate max-w-[160px]">{user?.email}</span>
-          )}
-          <button
-            onClick={handleSignOut}
-            className="text-xs text-slate-500 hover:text-slate-300 transition-colors"
-          >
-            {isGuest ? "終了" : "ログアウト"}
-          </button>
-        </div>
-      </header>
-
-      <div className="flex-1 max-w-2xl mx-auto w-full flex flex-col p-4 gap-4">
-
-        {step === "existing" && (
-          <div className="space-y-4 mt-4">
-            <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl px-4 py-3 text-amber-400 text-sm">
-              今日（{dateStr}）の振り返りはすでに保存されています。
-            </div>
-            <div className="bg-slate-900 border border-white/5 rounded-xl p-5">
-              <pre className="whitespace-pre-wrap text-sm text-slate-300 font-sans leading-relaxed">{existingContent}</pre>
-            </div>
-            <button
-              onClick={startReflection}
-              className="px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 text-sm rounded-lg transition-all"
-            >
-              ✏️ 上書きする
+              {isGuest ? "終了" : "ログアウト"}
             </button>
           </div>
-        )}
+        </header>
 
-        {step === "chat" && (
-          <>
-            <div className="flex-1 space-y-4 pt-4">
-              {messages.map((msg, i) => (
-                <div key={i} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
-                  {msg.role === "assistant" && (
-                    <div className="w-7 h-7 rounded-full bg-indigo-500/15 border border-indigo-500/25 flex items-center justify-center text-xs mr-2 flex-shrink-0 mt-1">
-                      🌙
-                    </div>
-                  )}
-                  <div className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm ${
-                    msg.role === "user"
-                      ? "bg-gradient-to-br from-indigo-500 to-violet-600 text-white shadow-lg shadow-indigo-500/20"
-                      : "bg-slate-800/60 border border-white/5 text-slate-200"
-                  }`}>
-                    <p className="whitespace-pre-wrap leading-relaxed">{msg.content}</p>
+        <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "12px" }}>
+          {step === "existing" && (
+            <div>
+              <p style={{ border: "1px solid #000080", padding: "8px", background: "#fffff0", margin: "0 0 12px" }}>
+                ⚠ 今日（{dateStr}）の振り返りはすでに保存されています。
+              </p>
+              <div className="retro-box">
+                <pre style={{ whiteSpace: "pre-wrap", fontSize: "13px", margin: 0, ...RS }}>{existingContent}</pre>
+              </div>
+              <button onClick={startReflection} className="retro-btn">✏ 上書きする</button>
+            </div>
+          )}
+
+          {step === "chat" && (
+            <>
+              <div style={{ flex: 1 }}>
+                {messages.map((msg, i) => (
+                  <div key={i} style={{ marginBottom: "14px" }}>
+                    {msg.role === "assistant" ? (
+                      <div style={{ borderLeft: "3px solid #000080", paddingLeft: "10px" }}>
+                        <div style={{ fontSize: "11px", fontWeight: "bold", marginBottom: "3px" }}>【AI】</div>
+                        <pre style={{ whiteSpace: "pre-wrap", margin: 0, fontSize: "14px", ...RS }}>{msg.content}</pre>
+                      </div>
+                    ) : (
+                      <div style={{ textAlign: "right" }}>
+                        <span style={{ background: "#000080", color: "#ffffff", padding: "5px 12px", fontSize: "14px", display: "inline-block" }}>
+                          &gt; {msg.content}
+                        </span>
+                      </div>
+                    )}
                   </div>
+                ))}
+                <div ref={bottomRef} />
+              </div>
+              <form onSubmit={handleSubmit} style={{ display: "flex", gap: "8px", borderTop: "1px dashed #000080", paddingTop: "12px" }}>
+                <input
+                  type="text"
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  placeholder="答えを入力してください..."
+                  autoFocus
+                  style={{ flex: 1, border: "2px solid #000080", padding: "6px 8px", ...RS, fontSize: "14px" }}
+                />
+                <button type="submit" disabled={!input.trim()} className="retro-btn">
+                  送信 ▶
+                </button>
+              </form>
+            </>
+          )}
+
+          {(step === "synthesizing" || step === "done") && (
+            <div>
+              {step === "synthesizing" && (
+                <p style={{ margin: "0 0 12px" }}>⏳ 振り返りをまとめています... しばらくお待ちください。</p>
+              )}
+              {step === "done" && (
+                <p style={{ border: "1px solid #000080", padding: "8px", background: isGuest ? "#fffff0" : "#f0fff0", margin: "0 0 12px" }}>
+                  {isGuest ? "⚠ ゲストモードのため保存されません。" : "✅ 保存しました"}
+                </p>
+              )}
+              {synthesis && (
+                <div className="retro-box">
+                  <pre style={{ whiteSpace: "pre-wrap", fontSize: "13px", margin: 0, ...RS }}>{synthesis}</pre>
                 </div>
-              ))}
+              )}
+              {step === "done" && (
+                <button onClick={startReflection} className="retro-btn">↩ もう一度始める</button>
+              )}
               <div ref={bottomRef} />
             </div>
-            <form onSubmit={handleSubmit} className="flex gap-2 pb-2">
-              <input
-                type="text"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                placeholder="答えを入力..."
-                className="flex-1 bg-slate-800/50 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500/40 transition-all"
-                autoFocus
-              />
-              <button
-                type="submit"
-                disabled={!input.trim()}
-                className="px-5 py-3 bg-gradient-to-r from-indigo-500 to-violet-500 hover:from-indigo-400 hover:to-violet-400 text-white rounded-xl text-sm font-semibold disabled:opacity-30 transition-all shadow-lg shadow-indigo-500/20"
-              >
-                送信
-              </button>
-            </form>
-          </>
-        )}
+          )}
+        </div>
 
-        {(step === "synthesizing" || step === "done") && (
-          <div className="space-y-4 pt-4">
-            {step === "synthesizing" && (
-              <div className="flex items-center gap-3 text-slate-400 text-sm">
-                <div className="w-4 h-4 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin flex-shrink-0" />
-                振り返りをまとめています...
-              </div>
-            )}
-            {step === "done" && (
-              <div className={`rounded-xl px-4 py-3 text-sm border ${
-                isGuest
-                  ? "bg-amber-500/10 border-amber-500/20 text-amber-400"
-                  : "bg-emerald-500/10 border-emerald-500/20 text-emerald-400"
-              }`}>
-                {isGuest
-                  ? "⚠️ ゲストモードのため保存されません。ブラウザを閉じると消えます。"
-                  : "✅ 保存しました"}
-              </div>
-            )}
-            {synthesis && (
-              <div className="bg-slate-900 border border-white/5 rounded-xl p-6">
-                <pre className="whitespace-pre-wrap text-sm text-slate-200 font-sans leading-relaxed">{synthesis}</pre>
-              </div>
-            )}
-            {step === "done" && (
-              <button
-                onClick={startReflection}
-                className="px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 text-slate-400 hover:text-white text-sm rounded-lg transition-all"
-              >
-                もう一度始める
-              </button>
-            )}
-            <div ref={bottomRef} />
-          </div>
-        )}
+        <footer style={{ borderTop: "1px dashed #000080", paddingTop: "10px", textAlign: "center", fontSize: "12px", marginTop: "20px" }}>
+          振り返りアプリ &copy; 2026
+        </footer>
       </div>
     </div>
   )
