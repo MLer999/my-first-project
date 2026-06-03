@@ -10,6 +10,16 @@ export default function Home() {
   const router = useRouter()
   const [checking, setChecking] = useState(true)
   const [loadingProvider, setLoadingProvider] = useState<"github" | "google" | null>(null)
+  const [count, setCount] = useState<string | null>(null)
+
+  useEffect(() => {
+    fetch("/api/counter", { method: "POST" })
+      .then((r) => r.json())
+      .then((d) => {
+        if (d.count) setCount(String(d.count).padStart(6, "0"))
+      })
+      .catch(() => {})
+  }, [])
 
   useEffect(() => {
     if (sessionStorage.getItem("reflection-guest") === "1") {
@@ -123,7 +133,7 @@ export default function Home() {
         </div>
 
         <footer style={{ borderTop: "1px dashed #000080", padding: "15px 0", textAlign: "center", fontSize: "12px", marginTop: "20px" }}>
-          振り返りアプリ &copy; 2026 &nbsp;|&nbsp; 訪問者数: <span className="retro-counter">000042</span>
+          振り返りアプリ &copy; 2026 &nbsp;|&nbsp; 訪問者数: <span className="retro-counter">{count ?? "------"}</span>
         </footer>
       </div>
     </div>
