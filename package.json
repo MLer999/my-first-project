@@ -10,10 +10,10 @@
   "dependencies": {
     "@supabase/ssr": "^0.10.3",
     "@supabase/supabase-js": "^2.106.2",
-    "@upstash/redis": "^1.38.0",
     "next": "^15.3.2",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "redis": "^6.0.0"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
