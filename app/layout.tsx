@@ -1,8 +1,5 @@
 import type { Metadata } from "next"
-import { Inter } from "next/font/google"
 import "./globals.css"
-
-const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
   title: "振り返りアプリ",
@@ -12,7 +9,9 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ja">
-      <body className={inter.className}>{children}</body>
+      <body style={{ fontFamily: '"MS Pゴシック", "MS PGothic", sans-serif', backgroundColor: "#E0FFFF", color: "#000080", margin: 0, padding: 0 }}>
+        {children}
+      </body>
     </html>
   )
 }
