@@ -115,11 +115,15 @@ export default function ReflectPage() {
     if (!isGuest) {
       const now = new Date().toLocaleString("ja-JP")
       const content = `# 振り返り — ${dateStr}\n\n${body.trim()}\n\n---\n記録日時: ${now}\n`
-      await fetch("/api/reflections", {
+      console.log("[DEBUG] body length:", body.length)
+      console.log("[DEBUG] content to save:", content.slice(0, 100))
+      const saveRes = await fetch("/api/reflections", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ date: dateStr, content }),
       })
+      const saveData = await saveRes.json()
+      console.log("[DEBUG] save status:", saveRes.status, saveData)
     }
     setStep("done")
   }
