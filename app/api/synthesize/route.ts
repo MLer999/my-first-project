@@ -34,7 +34,14 @@ export async function POST(req: NextRequest) {
     }
   )
 
-  if (!cfRes.ok) return new NextResponse(await cfRes.text(), { status: cfRes.status })
+  console.log("[CF] status:", cfRes.status, "ok:", cfRes.ok)
+  console.log("[CF] content-type:", cfRes.headers.get("content-type"))
+
+  if (!cfRes.ok) {
+    const errText = await cfRes.text()
+    console.error("[CF] error body:", errText)
+    return new NextResponse(errText, { status: cfRes.status })
+  }
 
   return new NextResponse(cfRes.body, {
     headers: {
